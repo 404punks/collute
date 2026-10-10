@@ -70,12 +70,20 @@ npm start
 
 ## Deployment
 
-1. Set `NODE_ENV=production` and `PUMPFUN_DATA_MODE=live`.
-2. Provide `DATABASE_URL`. The schema targets SQLite so the app runs without another service. For Postgres, change the datasource provider in `prisma/schema.prisma`, then run `npx prisma migrate dev`.
-3. `npx prisma migrate deploy`
-4. `npm run build && npm start`
+`npm run build` creates `prisma/callout.db`, applies the schema, and seeds the demo accounts. That file is gitignored. The build traces it into the server output.
 
-The Node server must be allowed to reach `frontend-api-v3.pump.fun`. The browser never calls Pump directly.
+On Vercel the app copies `prisma/callout.db` to `/tmp/callout.db` on first use and points Prisma at that file. The demo account is present after a cold start. Accounts, posts, and bookmarks created on the site stay on that instance until it is replaced, then the seeded database is copied again. A durable database needs a different Prisma provider and a hosted `DATABASE_URL`. SQLite cannot use a Postgres URL.
+
+Local and long-lived hosts keep using `DATABASE_URL` (default `file:./dev.db`):
+
+```bash
+npx prisma migrate deploy
+npm run db:seed
+npm run build
+npm start
+```
+
+Set `PUMPFUN_DATA_MODE=live`. The Node server must be allowed to reach `frontend-api-v3.pump.fun`. The browser never calls Pump directly.
 
 Keep the process long-lived if you want the in-memory coin cache. Several instances do not share that cache.
 

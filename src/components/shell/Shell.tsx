@@ -21,6 +21,7 @@ export function Shell({
   members,
   recentLookups,
   status,
+  notice,
   children,
 }: {
   user: PublicUser | null;
@@ -28,6 +29,7 @@ export function Shell({
   members: RailMember[];
   recentLookups: RailLookup[];
   status: PumpStatus;
+  notice?: string | null;
   children: React.ReactNode;
 }) {
   const [open, setOpen] = useState(false);
@@ -106,6 +108,11 @@ export function Shell({
               <Icon name="search" />
             </Link>
           </header>
+          {notice ? (
+            <p className="banner" role="status">
+              {notice}
+            </p>
+          ) : null}
           <div id="main">{children}</div>
         </div>
         <aside className="rail" aria-label="Discovery">
