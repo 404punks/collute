@@ -32,18 +32,23 @@ export async function destroySession() {
 }
 
 export async function getCurrentUser() {
-  const jar = await cookies();
-  const token = jar.get(SESSION_COOKIE)?.value;
-  if (!token) return null;
-  const tokenHash = await hashSessionToken(token);
-  const session = await prisma.session.findUnique({
-    where: { tokenHash },
-    include: { user: true },
-  });
-  if (!session) return null;
-  if (session.expiresAt.getTime() < Date.now()) {
-    await prisma.session.delete({ where: { id: session.id } });
+  try {
+    const jar = await cookies();
+    const token = jar.get(SESSION_COOKIE)?.value;
+    if (!token) return null;
+    const tokenHash = await hashSessionToken(token);
+    const session = await prisma.session.findUnique({
+      where: { tokenHash },
+      include: { user: true },
+    });
+    if (!session) return null;
+    if (session.expiresAt.getTime() < Date.now()) {
+      await prisma.session.delete({ where: { id: session.id } });
+      return null;
+    }
+    return session.user;
+  } catch (error) {
+    console.error("[callout] session lookup failed", error instanceof Error ? error.message : "unknown");
     return null;
   }
-  return session.user;
 }

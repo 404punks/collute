@@ -25,6 +25,11 @@ export default async function SettingsPage() {
       <section className="panel">
         <h2 className="m-0 text-base font-semibold">Data source</h2>
         <p className="lede">Mode: {status.mode}. Coin lookup uses the documented coins-v2 endpoint. Callout posts are {status.callouts.available ? "available" : "not available from an official API"}.</p>
+        {process.env.VERCEL ? (
+          <p className="lede">
+            This deployment stores accounts on the server instance. The demo account is included each time a new instance starts. Accounts created here remain until that instance is replaced.
+          </p>
+        ) : null}
       </section>
     </>
   );

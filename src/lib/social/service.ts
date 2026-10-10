@@ -255,9 +255,13 @@ export async function searchMembersAndPosts(query: string) {
 }
 
 export async function recordLookup(userId: string | null, token: NormalizedToken) {
-  await prisma.tokenLookup.create({
-    data: { userId, mint: token.mint, name: token.name, symbol: token.symbol },
-  });
+  try {
+    await prisma.tokenLookup.create({
+      data: { userId, mint: token.mint, name: token.name, symbol: token.symbol },
+    });
+  } catch (error) {
+    console.error("[callout] lookup was not saved", error instanceof Error ? error.message : "unknown");
+  }
 }
 
 export async function recentLookups(userId: string | null) {
