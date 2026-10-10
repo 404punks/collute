@@ -35,6 +35,8 @@ What a live response of this endpoint also returned, and this app uses only for 
 
 Observed on 10 October 2026 for an unknown mint: HTTP 404 JSON, `x-ratelimit-limit: 60`, `x-ratelimit-remaining`, `x-ratelimit-reset: 60`. Those headers are observations, not a published rate-limit contract. The server caches a successful coin for 30 seconds, retries 429 and 5xx responses, and honors `Retry-After` up to two seconds.
 
+Node's `fetch` can receive Cloudflare `403 access_denied` for this same URL while `curl` receives `200`. When that happens, the adapter repeats the identical GET through `curl`. It does not switch endpoints.
+
 `token_program` is not shown. The official skill says the HTTP value must not be trusted.
 
 `verified`, `volume_1h_usd`, ATH, liquidity, and `security_verdict` can appear in live JSON. They are not in the published example and are not shown. A `verified` flag is not treated as an audit, safety review, or endorsement.
